@@ -34,7 +34,7 @@ from routes import * # Import all routes from routes.py
 with app.app_context():
     # Create all database tables defined in models.py
     # This will only create tables if they don't already exist.
-    db.create_all()
+    db.create_all() 
 
 @app.context_processor
 def inject_now():
