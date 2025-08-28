@@ -16,13 +16,25 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Fetch secrets from Azure Key Vault
+      id: get-secrets
+      uses: azure/get-keyvault-secrets@v1
+      with:
+        keyvault: ${{ secrets.KEY_VAULT_NAME }}
+        secrets: ACRUsername, ACRPassword
       
     - name: Log in to Azure Container Registry
       uses: azure/docker-login@v1
       with:
         login-server: jbcontainerregistry.azurecr.io
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+        username: ${{ steps.get-secrets.outputs.ACRUsername }}
+        password: ${{ steps.get-secrets.outputs.ACRPassword }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
